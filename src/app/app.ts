@@ -1,3 +1,4 @@
+import { error } from 'console';
 import express, { Request, Response } from 'express';
 import { NextFunction } from 'express-serve-static-core';
 const app = express()
@@ -39,9 +40,20 @@ const logger = (req: Request, res: Response, next: NextFunction) => {
     next();
 }
 
-app.get('/', logger, (req: Request, res: Response) => {
+app.get('/', logger, (req: Request, res: Response, next: NextFunction) => {
     // res.send(logger)
-    res.send(req.params);
+    try {
+        res.send(something);
+    } catch (err) {
+        console.log(err);
+        next(error);
+        // res.status(400).json({
+
+        //     success: false, 
+        //     message: "failed"
+        // })
+    }
+
     console.log(req.query)
 })
 
@@ -52,4 +64,22 @@ app.post('/', logger, (req: Request, res: Response) => {
     });
 })
 
+// Custom error
+app.use("*", (req: Request, res: Response) => {
+    res.status(400).json({
+        success: false,
+        message: "Route not found"
+    })
+})
+
+// Global Error handler
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+    if (error) {
+        res.status(400).json({
+            success: false,
+            message: "something wroing"
+        })
+    }
+    console.log(error);
+})
 export default app;

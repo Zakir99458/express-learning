@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const console_1 = require("console");
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const port = 3000;
@@ -34,9 +35,19 @@ const logger = (req, res, next) => {
     console.log(req.url, req.method, req.hostname);
     next();
 };
-app.get('/', logger, (req, res) => {
+app.get('/', logger, (req, res, next) => {
     // res.send(logger)
-    res.send(req.params);
+    try {
+        res.send(something);
+    }
+    catch (err) {
+        console.log(err);
+        next(console_1.error);
+        // res.status(400).json({
+        //     success: false, 
+        //     message: "failed"
+        // })
+    }
     console.log(req.query);
 });
 app.post('/', logger, (req, res) => {
@@ -44,5 +55,22 @@ app.post('/', logger, (req, res) => {
     res.json({
         message: "Successfully received"
     });
+});
+// Custom error
+app.use("*", (req, res) => {
+    res.status(400).json({
+        success: false,
+        message: "Route not found"
+    });
+});
+// Global Error handler
+app.use((error, req, res, next) => {
+    if (error) {
+        res.status(400).json({
+            success: false,
+            message: "something wroing"
+        });
+    }
+    console.log(error);
 });
 exports.default = app;
