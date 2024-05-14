@@ -1,9 +1,19 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 const app = express()
 const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+// use parser
+app.use(express.json());
+
+app.get('/', (req : Request, res : Response) => {
+  res.send('Hello world!!!!')
+})
+
+app.post('/', (req: Request, res: Response) =>{
+    console.log(req.body);
+    res.json({
+        message: "Successfully received"
+    });
 })
 
 export default app;
