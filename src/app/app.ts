@@ -6,7 +6,8 @@ const port = 3000
 app.use(express.json());
 
 app.get('/', (req : Request, res : Response) => {
-  res.send('Hello world!!!!')
+  res.send(req.params);
+  console.log(req.query)
 })
 
 app.post('/', (req: Request, res: Response) =>{
